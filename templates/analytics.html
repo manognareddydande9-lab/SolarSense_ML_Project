@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block title %}Analytics{% endblock %}{% block heading %}Analytics & Visualization{% endblock %}{% block content %}
+<div class="page-title"><h2>Exploratory Data Analysis</h2><p>Understand generation patterns and feature relationships.</p></div>
+<div class="row g-4"><div class="col-lg-6"><div class="cardbox"><h4>Average AC Power by Hour</h4><canvas id="h"></canvas></div></div><div class="col-lg-6"><div class="cardbox"><h4>Correlation with AC Power</h4><canvas id="c"></canvas></div></div></div>
+<div class="cardbox mt-4"><h4>Descriptive Statistics</h4>{{summary|safe}}</div><div class="cardbox mt-4"><h4>Missing Values</h4>{% for k,v in missing.items() %}<span class="pill">{{k}}: {{v}}</span> {% endfor %}</div>
+<script>let h={{hourly|tojson}},c={{corr|tojson}};new Chart(document.getElementById('h'),{type:'bar',data:{labels:h.labels,datasets:[{label:'Mean AC Power',data:h.data}]}});new Chart(document.getElementById('c'),{type:'bar',data:{labels:c.labels,datasets:[{label:'Correlation',data:c.data}]},options:{indexAxis:'y'}});</script>{% endblock %}

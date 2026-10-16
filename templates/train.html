@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}Model Training{% endblock %}{% block heading %}Model Training & Comparison{% endblock %}{% block content %}
+<div class="page-title"><h2>Machine Learning Model Lab</h2><p>Train multiple regressors and compare R², MAE and RMSE.</p></div><div class="cardbox mb-4"><form method="post"><button class="btn btn-primary btn-lg"><i class="bi bi-cpu"></i> Train All Models</button></form></div>
+{% if results %}<div class="cardbox"><h4>Model Comparison</h4><table class="table table-hover"><thead><tr><th>Model</th><th>R²</th><th>MAE</th><th>RMSE</th></tr></thead><tbody>{% for r in results %}<tr><td>{{r.Model}}</td><td>{{'%.4f'|format(r.R2)}}</td><td>{{'%.2f'|format(r.MAE)}}</td><td>{{'%.2f'|format(r.RMSE)}}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{% if meta %}<div class="cardbox mt-4"><h4>Saved Model</h4><p><b>{{meta.best_model}}</b> · Target: {{meta.target}} · Rows: {{meta.rows}}</p></div>{% endif %}{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Model Selection{% endblock %}
+{% block heading %}Model Selection & Experiment Lab{% endblock %}
+{% block content %}
+<div class="page-title"><h2>🤖 Select the Model</h2><p>Choose supervised or unsupervised learning, select the algorithm, and choose your target column.</p></div>
+
+<div class="cardbox model-lab">
+  <form method="post" id="modelForm">
+    <div class="step-title"><span>1</span><div><b>Learning Type</b><small>Choose the machine learning family</small></div></div>
+    <div class="choice-grid two">
+      <label class="choice-card"><input type="radio" name="family" value="Supervised" checked><div><i class="bi bi-bullseye"></i><strong>Supervised Learning</strong><small>Regression & Classification</small></div></label>
+      <label class="choice-card"><input type="radio" name="family" value="Unsupervised"><div><i class="bi bi-diagram-3"></i><strong>Unsupervised Learning</strong><small>Clustering & PCA</small></div></label>
+    </div>
+
+    <div id="supervisedBox">
+      <div class="step-title mt-4"><span>2</span><div><b>Supervised Problem Type</b><small>Pick Regression or Classification</small></div></div>
+      <div class="choice-grid two compact">
+        <label class="choice-card"><input type="radio" name="group" value="Regression" checked><div><i class="bi bi-graph-up"></i><strong>Regression</strong><small>Predict continuous values</small></div></label>
+        <label class="choice-card"><input type="radio" name="group" value="Classification"><div><i class="bi bi-tags"></i><strong>Classification</strong><small>Predict categories/classes</small></div></label>
+      </div>
+    </div>
+
+    <div class="step-title mt-4"><span id="step3">3</span><div><b>Select Model</b><small id="modelHint">Choose an algorithm from the list</small></div></div>
+    <div class="model-panel" id="modelPanel"></div>
+    <select name="model_name" id="modelSelect" class="form-select form-select-lg" required></select>
+
+    <div class="step-title mt-4" id="targetStep"><span>4</span><div><b>Select Target Column</b><small>You decide what the model should predict</small></div></div>
+    <select name="target" id="targetSelect" class="form-select form-select-lg">
+      {% for col in columns %}<option value="{{col}}" {% if col=='AC_POWER' %}selected{% endif %}>{{col}}</option>{% endfor %}
+    </select>
+    <div class="target-note" id="targetNote"><i class="bi bi-info-circle"></i> The selected column becomes <b>y (target)</b>; all other usable columns become input features.</div>
+
+    <button class="btn btn-primary btn-lg w-100 mt-4" type="submit"><i class="bi bi-play-circle-fill"></i> Run Selected Model</button>
+  </form>
+</div>
+
+{% if error %}<div class="alert alert-danger mt-4"><b>Model error:</b> {{error}}</div>{% endif %}
+{% if selected %}
+<div class="cardbox mt-4 result-card">
+  <div class="result-head"><div><span class="result-badge">COMPLETED</span><h3>{{selected.model}}</h3><p>{{selected.family}} · {{selected.group}}</p></div><i class="bi bi-check2-circle"></i></div>
+  {% if selected.target %}<div class="selected-info"><span>Target</span><b>{{selected.target}}</b><span>Rows</span><b>{{selected.rows}}</b><span>Features</span><b>{{selected.features}}</b></div>{% endif %}
+  {% if metrics %}
+  <div class="metric-grid">
+    {% for k,v in metrics.items() %}<div><small>{{k}}</small><strong>{% if k=='R²' %}{{'%.4f'|format(v)}}{% else %}{{'%.2f'|format(v)}}{% endif %}</strong></div>{% endfor %}
+  </div>
+  {% endif %}
+  {% if unsup %}
+    <div class="metric-grid"><div><small>Rows</small><strong>{{unsup.rows}}</strong></div><div><small>Result</small><strong>{{unsup.type}}</strong></div>{% if unsup.clusters is defined %}<div><small>Clusters</small><strong>{{unsup.clusters}}</strong></div>{% endif %}{% if unsup.components is defined %}<div><small>Components</small><strong>{{unsup.components}}</strong></div>{% endif %}</div>
+    {% if unsup.variance is defined %}<div class="target-note mt-3">PCA explained variance ratio: <b>{{unsup.variance}}</b></div>{% endif %}
+    {% if unsup.distribution is defined %}<div class="target-note mt-3">Cluster distribution: <b>{{unsup.distribution}}</b></div>{% endif %}
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="cardbox mt-4"><h4>📚 Algorithms included</h4><div class="catalog-grid">
+{% for family,groups in catalog.items() %}<div class="catalog-section"><h5>{{family}}</h5>{% for group,names in groups.items() %}<div class="catalog-group"><b>{{group}}</b>{% for name in names %}<span>{{name}}</span>{% endfor %}</div>{% endfor %}</div>{% endfor %}
+</div><div class="target-note mt-3"><i class="bi bi-lightbulb"></i> C4.5 is represented using an entropy/information-gain decision tree; CART uses the Gini criterion. LightGBM is supported when the LightGBM package is installed.</div></div>
+
+<script>
+const catalog = {{ catalog|tojson }};
+const familyRadios = [...document.querySelectorAll('input[name="family"]')];
+const groupRadios = [...document.querySelectorAll('input[name="group"]')];
+const modelSelect = document.getElementById('modelSelect');
+const modelPanel = document.getElementById('modelPanel');
+const supervisedBox = document.getElementById('supervisedBox');
+const targetSelect = document.getElementById('targetSelect');
+const targetStep = document.getElementById('targetStep');
+const targetNote = document.getElementById('targetNote');
+function selected(name){ const x=document.querySelector('input[name="'+name+'"]:checked'); return x?x.value:null; }
+function rebuild(){
+  const family=selected('family');
+  supervisedBox.style.display = family==='Supervised' ? 'block' : 'none';
+  targetStep.style.display = family==='Supervised' ? 'flex' : 'none';
+  targetSelect.style.display = family==='Supervised' ? 'block' : 'none';
+  targetNote.style.display = family==='Supervised' ? 'block' : 'none';
+  let groups = family==='Supervised' ? [selected('group')] : Object.keys(catalog.Unsupervised);
+  let html=''; let names=[];
+  groups.forEach(g=>{ const list=catalog[family][g]||[]; html += '<div class="model-category"><b>'+g+'</b><div class="chips">'+list.map(n=>'<span>'+n+'</span>').join('')+'</div></div>'; names.push(...list); });
+  modelPanel.innerHTML=html; modelSelect.innerHTML=names.map(n=>'<option value="'+n+'">'+n+'</option>').join('');
+}
+familyRadios.forEach(x=>x.addEventListener('change',rebuild)); groupRadios.forEach(x=>x.addEventListener('change',rebuild)); rebuild();
+</script>
+{% endblock %}

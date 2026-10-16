@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}Preprocessing{% endblock %}{% block heading %}Data Preprocessing{% endblock %}{% block content %}
+<div class="page-title"><h2>Preprocessing Lab</h2><p>Demonstrate common data-cleaning steps.</p></div>{% if message %}<div class="alert alert-info">{{message}}</div>{% endif %}
+<div class="cardbox mb-4"><form method="post" class="d-flex gap-2"><button name="action" value="duplicates" class="btn btn-outline-primary">Check Duplicates</button><button name="action" value="missing" class="btn btn-outline-success">Check Missing Values</button></form></div>
+<div class="cardbox"><h4>Data Preview</h4><div class="table-responsive">{{df|safe}}</div></div>{% endblock %}

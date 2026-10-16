@@ -1,0 +1,2 @@
+{% extends "base.html" %}{% block title %}Upload Dataset{% endblock %}{% block heading %}Upload Dataset{% endblock %}{% block content %}
+<div class="page-title"><h2>Kaggle Dataset Upload</h2><p>Upload a compatible CSV for analysis.</p></div><div class="cardbox"><form method="post" enctype="multipart/form-data"><input class="form-control" type="file" name="dataset" accept=".csv" required><button class="btn btn-primary mt-3">Upload CSV</button></form><hr><p>Expected files: Plant_1_Generation_Data.csv and Plant_1_Weather_Sensor_Data.csv.</p></div>{% endblock %}

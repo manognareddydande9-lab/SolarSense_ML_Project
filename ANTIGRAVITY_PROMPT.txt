@@ -1,0 +1,22 @@
+Build/maintain this SolarSense Flask ML project with a professional dashboard UI.
+
+NEW REQUIRED FEATURE: Add a Model Selection page in the sidebar called “Model Selection”. It must have a visual two-option choice: Supervised Learning and Unsupervised Learning.
+
+Supervised:
+- Regression: Linear Regression, Ridge Regression, Lasso Regression, Decision Tree Regressor (CART), Random Forest Regressor, Bagging Regressor, Gradient Boosting Regressor, LightGBM Regressor.
+- Classification: Logistic Regression, Decision Tree Classifier (C4.5 using entropy/information gain), Decision Tree Classifier (CART using Gini), Random Forest Classifier, Bagging Classifier, Gradient Boosting Classifier, LightGBM Classifier.
+
+Unsupervised:
+- Clustering: K-Means, Mini-Batch K-Means, Hierarchical Clustering, Agglomerative Clustering, DBSCAN.
+- Dimensionality Reduction: PCA.
+
+For supervised learning, the user must be able to select ANY dataset column as the target column. All other usable numeric/codable columns become features. For unsupervised learning, hide/disable target selection because a target is not required.
+
+The model selection page must run the selected model and show a completion card with the selected model, learning type, target (if applicable), rows, feature count, and suitable metrics. Regression: R², MAE, RMSE. Classification: Accuracy. Clustering: number of clusters and distribution. PCA: number of components and explained variance ratio.
+
+Use Flask, pandas, numpy, scikit-learn, joblib and optional LightGBM. Keep the existing SolarSense sidebar/dashboard/analytics/preprocessing/prediction/upload/about/help pages and professional gradient-card UI. Add model_lab.py for the model catalog and training logic. Update requirements.txt with lightgbm>=4.0.
+
+Windows run commands:
+python -m pip install -r requirements.txt
+python app.py
+Open http://127.0.0.1:5000

@@ -1,0 +1,7 @@
+Official Kaggle source:
+https://www.kaggle.com/datasets/anikannal/solar-power-generation-data
+
+Dataset: Solar Power Generation Data
+Author: Ani Kannal
+
+Bundled CSVs are DEMO data with the same schema. Replace them with the original Kaggle files for final submission/review.

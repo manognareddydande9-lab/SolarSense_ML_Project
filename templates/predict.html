@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block title %}Predict Power{% endblock %}{% block heading %}Solar Power Prediction{% endblock %}{% block content %}
+<div class="page-title"><h2>Predict AC Power</h2><p>Enter sensor and time features to estimate output.</p></div><form method="post" class="cardbox"><div class="row g-3">
+{% for n,l,s in [('dc_power','DC Power (kW)','0.01'),('daily_yield','Daily Yield','0.01'),('ambient_temperature','Ambient Temperature (°C)','0.01'),('module_temperature','Module Temperature (°C)','0.01'),('irradiation','Irradiation (W/m²)','0.01'),('hour','Hour','1'),('minute','Minute','1'),('day','Day','1'),('month','Month','1'),('day_of_year','Day of Year','1')] %}
+<div class="col-md-6 col-lg-4"><label>{{l}}</label><input class="form-control" type="number" name="{{n}}" step="{{s}}" required></div>{% endfor %}</div><button class="btn btn-primary btn-lg mt-4">Predict AC Power</button>
+{% if prediction is not none %}<div class="prediction mt-4"><span>Predicted AC Power</span><strong>{{prediction}} kW</strong></div>{% endif %}</form>{% endblock %}
